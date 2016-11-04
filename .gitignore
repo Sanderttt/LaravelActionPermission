@@ -1,0 +1,7 @@
+# Created by .ignore support plugin (hsz.mobi)
+/vendor/
+.gitignore
+.idea/
+ISSUE_TEMPLATE.md
+PULL_REQUEST_TEMPLATE.md
+composer.lock
