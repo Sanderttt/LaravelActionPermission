@@ -10,5 +10,19 @@ namespace RobinVanDijk\LaravelActionPermission\Contracts;
 
 interface ActionManagerContract
 {
+    function massSync($records);
 
+    function listActions();
+
+    function ignoreActions($actions);
+
+    function listIgnoredActions();
+
+    function setNavActions($actions);
+
+    function listNavActions();
+
+    function getActionByMethodAndPath($method, $path);
+
+    function verify($method, $path, $user);
 }

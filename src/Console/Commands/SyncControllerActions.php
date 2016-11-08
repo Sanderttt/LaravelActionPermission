@@ -9,6 +9,8 @@
 namespace RobinVanDijk\LaravelActionPermission\Console\Commands;
 
 use Illuminate\Console\Command;
+use RobinVanDijk\LaravelActionPermission\ActionManager;
+use RobinVanDijk\LaravelActionPermission\Contracts\ActionManagerContract;
 use RobinVanDijk\LaravelActionPermission\Contracts\RouterManagerContract;
 use RobinVanDijk\LaravelActionPermission\RouterManager;
 
@@ -36,14 +38,23 @@ class SyncControllerActions extends Command
     protected $router;
 
     /**
+     * Action manager.
+     *
+     * @var ActionManager
+     */
+    protected $action;
+
+    /**
      * Create a new command instance.
      * @param RouterManagerContract $router
+     * @param ActionManagerContract $action
      */
-    public function __construct(RouterManagerContract $router)
+    public function __construct(RouterManagerContract $router, ActionManagerContract $action)
     {
         parent::__construct();
 
         $this->router = $router;
+        $this->action = $action;
     }
 
     /**
@@ -52,6 +63,10 @@ class SyncControllerActions extends Command
      */
     public function handle()
     {
-        $actions = $this->router->getActions();
+        $routes = $this->router->getRoutes();
+        $actions = $this->router->getActionsFromRoutes($routes);
+        $this->action->massSync($actions);
+
+        $this->info('Done');
     }
 }
