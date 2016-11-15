@@ -13,7 +13,9 @@ class PermissionMiddleware
         $next = $next($request);
         $action_manager = app()->make(ActionManagerContract::class);
         $user = Auth::user();
-        if (!$action_manager->verify($request->getMethod(), $request->route()->getActionName(), $user)) {
+        if ($request->route() !== null && !$action_manager->verify($request->getMethod(),
+                $request->route()->getActionName(), $user)
+        ) {
             abort(403, 'Access denied');
         }
 

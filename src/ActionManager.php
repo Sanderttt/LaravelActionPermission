@@ -9,9 +9,12 @@ class ActionManager implements ActionManagerContract
 {
     protected $action;
 
+    protected $cache;
+
     public function __construct()
     {
-        $this->action = app(Action::class);
+        $this->action = app()->make(Action::class);
+        $this->cache = app()->make('Illuminate\Contracts\Cache\Repository');
     }
 
     public function massSync($records)
@@ -79,10 +82,43 @@ class ActionManager implements ActionManagerContract
 
     function verify($method, $path, $user)
     {
-        $action = $this->action->where('method', '=', $method)->where('path', '=', $path)->first();
-        if (!$action || $action->is_ignored) {
+        $action = $this->getCurrentRouteAction($method, $path);
+        if (!isset($action) || !$action || $action->is_ignored) {
             return true;
         }
+        $allowed_actions = $this->getUserActions($user);
+
+        if (!in_array($action->id, $allowed_actions)) {
+            return false;
+        }
+
+        return true;
+    }
+
+    public function getCurrentRouteAction($method, $path)
+    {
+        if ($this->cache->has($method . '.' . $path)) {
+            return $this->cache->get($method . '.' . $path);
+        }
+
+        $action = $this->getAction($method, $path);
+
+        $this->cache->put($method . '.' . $path, $action, 60 * 60 * 24 * 7);
+
+        return $action;
+    }
+
+    public function getAction($method, $path)
+    {
+        return $this->action->where('method', '=', $method)->where('path', '=', $path)->first();
+    }
+
+    public function getUserActions($user)
+    {
+        if ($this->cache->has($user->id . '.actions')) {
+            return $this->cache->get($user->id . '.actions');
+        }
+
         $user_actions = $user->actions()->withoutGlobalScopes()->get()->pluck('id')->toArray();
         $role_actions = [];
         foreach ($user->roles()->withoutGlobalScopes()->get() as $role) {
@@ -90,10 +126,8 @@ class ActionManager implements ActionManagerContract
         }
 
         $allowed_actions = array_unique(array_merge($user_actions, array_flatten($role_actions)));
-        if (!in_array($action->id, $allowed_actions)) {
-            return false;
-        }
+        $this->cache->put($user->id . '.actions', $allowed_actions, 60 * 60 * 24 * 7);
 
-        return true;
+        return $allowed_actions;
     }
 }
