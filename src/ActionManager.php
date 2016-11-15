@@ -115,6 +115,9 @@ class ActionManager implements ActionManagerContract
 
     public function getUserActions($user)
     {
+        if (!isset($user)) {
+            return [];
+        }
         if ($this->cache->has($user->id . '.actions')) {
             return $this->cache->get($user->id . '.actions');
         }
