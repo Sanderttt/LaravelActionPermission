@@ -19,6 +19,6 @@ class Action extends Model
 
     protected $fillable = ['controller', 'function', 'method', 'name', 'path', 'is_ignored', 'in_nav'];
 
-    #protected $casts = ['is_ignored' => 'boolean', 'in_nav' => 'boolean'];
+    protected $casts = ['is_ignored' => 'boolean', 'in_nav' => 'boolean'];
 
 }

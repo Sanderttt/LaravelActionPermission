@@ -86,6 +86,7 @@ class ActionManager implements ActionManagerContract
         if (!isset($action) || !$action || $action->is_ignored) {
             return true;
         }
+
         $allowed_actions = $this->getUserActions($user);
 
         if (!in_array($action->id, $allowed_actions)) {
