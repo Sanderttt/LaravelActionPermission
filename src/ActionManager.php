@@ -117,7 +117,8 @@ class ActionManager implements ActionManagerContract
             return $this->cache->tags(config('action-permission.cache_key'))->get($method . '.' . $path);
         }
 
-        $action = $this->action->where('method', '=', $method)->where('path', '=', $path)->first()->toArray();
+        $action = $this->action->where('method', '=', $method)->where('path', '=', $path)->first();
+        $action = $action ? $action->toArray() : [];
         $this->cache->tags(config('action-permission.cache_key'))->put($method . '.' . $path, $action,
             60 * 60 * 24 * 7);
 
