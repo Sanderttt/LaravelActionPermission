@@ -17,7 +17,11 @@ class PermissionMiddleware
         if ($request->route() !== null && !$action_manager->verify($request->getMethod(),
                 $request->route()->getActionName(), $user)
         ) {
-            abort(403, 'Access denied');
+            if ($user) {
+                abort(403, 'Access denied');
+            }
+
+            return response()->redirect()->to('/login');
         }
 
         return $next;
