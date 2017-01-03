@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Win10H64
- * Date: 4-11-2016
- * Time: 11:17
- */
 
 namespace RobinVanDijk\LaravelActionPermission\Console\Commands;
 
@@ -43,14 +37,18 @@ class SyncControllerActions extends Command
      * @var ActionManager
      */
     protected $action;
+    protected $dispatcher;
+    protected $config;
 
     /**
      * Create a new command instance.
      * @param RouterManagerContract $router
      * @param ActionManagerContract $action
      */
-    public function __construct(RouterManagerContract $router, ActionManagerContract $action)
-    {
+    public function __construct(
+        RouterManagerContract $router,
+        ActionManagerContract $action
+    ) {
         parent::__construct();
 
         $this->router = $router;
@@ -66,7 +64,7 @@ class SyncControllerActions extends Command
         $routes = $this->router->getRoutes();
         $actions = $this->router->getActionsFromRoutes($routes);
         $this->action->massSync($actions);
-
+        cache()->tags(config('action-permission.cache_key'))->flush();
         $this->info('Done');
     }
 }

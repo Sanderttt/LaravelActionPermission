@@ -72,7 +72,15 @@ class ActionManager implements ActionManagerContract
 
     function listNavActions()
     {
-        return $this->action->where('in_nav', '=', 1)->get();
+        if (cache()->tags([config('action-permission.cache_key')])->has('nav')) {
+            return cache()->tags([config('action-permission.cache_key')])->get('nav');
+        }
+
+        $actions = $this->action->where('in_nav', '=', 1)->get();
+
+        cache()->tags([config('action-permission.cache_key')])->put('nav', $actions, 60 * 60 * 24 * 7);
+
+        return $actions;
     }
 
     function getActionByMethodAndPath($method, $path)
@@ -83,13 +91,13 @@ class ActionManager implements ActionManagerContract
     function verify($method, $path, $user)
     {
         $action = $this->getCurrentRouteAction($method, $path);
-        if (!isset($action) || !$action || $action->is_ignored) {
+        if (!isset($action) || !$action || $action['is_ignored']) {
             return true;
         }
 
         $allowed_actions = $this->getUserActions($user);
 
-        if (!in_array($action->id, $allowed_actions)) {
+        if (!in_array($action['id'], $allowed_actions)) {
             return false;
         }
 
@@ -98,20 +106,22 @@ class ActionManager implements ActionManagerContract
 
     public function getCurrentRouteAction($method, $path)
     {
-        if ($this->cache->has($method . '.' . $path)) {
-            return $this->cache->get($method . '.' . $path);
-        }
-
         $action = $this->getAction($method, $path);
-
-        $this->cache->put($method . '.' . $path, $action, 60 * 60 * 24 * 7);
 
         return $action;
     }
 
     public function getAction($method, $path)
     {
-        return $this->action->where('method', '=', $method)->where('path', '=', $path)->first();
+        if ($this->cache->tags(config('action-permission.cache_key'))->has($method . '.' . $path)) {
+            return $this->cache->tags(config('action-permission.cache_key'))->get($method . '.' . $path);
+        }
+
+        $action = $this->action->where('method', '=', $method)->where('path', '=', $path)->first()->toArray();
+        $this->cache->tags(config('action-permission.cache_key'))->put($method . '.' . $path, $action,
+            60 * 60 * 24 * 7);
+
+        return $action;
     }
 
     public function getUserActions($user)
@@ -119,8 +129,9 @@ class ActionManager implements ActionManagerContract
         if (!isset($user)) {
             return [];
         }
-        if ($this->cache->has($user->id . '.actions')) {
-            return $this->cache->get($user->id . '.actions');
+
+        if ($this->cache->tags([config('action-permission.cache_key'), $user->id])->has('actions')) {
+            return $this->cache->tags([config('action-permission.cache_key'), $user->id])->get('actions');
         }
 
         $user_actions = $user->actions()->withoutGlobalScopes()->get()->pluck('id')->toArray();
@@ -130,7 +141,8 @@ class ActionManager implements ActionManagerContract
         }
 
         $allowed_actions = array_unique(array_merge($user_actions, array_flatten($role_actions)));
-        $this->cache->put($user->id . '.actions', $allowed_actions, 60 * 60 * 24 * 7);
+        $this->cache->tags([config('action-permission.cache_key'), $user->id])->put('.actions', $allowed_actions,
+            60 * 60 * 24 * 7);
 
         return $allowed_actions;
     }

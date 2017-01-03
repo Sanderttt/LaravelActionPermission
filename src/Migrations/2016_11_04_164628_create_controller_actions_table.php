@@ -13,18 +13,20 @@ class CreateControllerActionsTable extends Migration
      */
     public function up()
     {
-        Schema::create('controller_actions', function (Blueprint $table) {
-            $table->bigIncrements('id');
-            $table->timestamps();
-            $table->string('controller');
-            $table->string('function');
-            $table->string('method');
-            $table->string('name');
-            $table->string('path');
-            $table->boolean('is_ignored')->default(false);
-            $table->boolean('in_nav')->default(false);
-            $table->unique(['controller', 'function', 'method']);
-        });
+        if (!Schema::hasTable('controller_actions')) {
+            Schema::create('controller_actions', function (Blueprint $table) {
+                $table->bigIncrements('id');
+                $table->timestamps();
+                $table->string('controller');
+                $table->string('function');
+                $table->string('method');
+                $table->string('name');
+                $table->string('path');
+                $table->boolean('is_ignored')->default(false);
+                $table->boolean('in_nav')->default(false);
+                $table->unique(['controller', 'function', 'method']);
+            });
+        }
     }
 
     /**

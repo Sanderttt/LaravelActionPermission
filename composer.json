@@ -21,6 +21,9 @@
         "Illuminate/Console": "^5.3",
         "Illuminate/Database": "^5.3",
         "Illuminate/Http": "^5.3",
+      "illuminate/cache": "^5.3",
+      "illuminate/events": "^5.3",
+      "illuminate/queue": "^5.3",
         "illuminate/support": "~5.1"
     },
     "require-dev": {

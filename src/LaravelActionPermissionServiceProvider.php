@@ -2,8 +2,11 @@
 
 namespace RobinVanDijk\LaravelActionPermission;
 
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
 use RobinVanDijk\LaravelActionPermission\Console\Commands\SyncControllerActions;
+use RobinVanDijk\LaravelActionPermission\Events\ClearPermissionCacheEvent;
+use RobinVanDijk\LaravelActionPermission\Listeners\ClearPermissionCacheListener;
 
 class LaravelActionPermissionServiceProvider extends ServiceProvider
 {
@@ -17,6 +20,10 @@ class LaravelActionPermissionServiceProvider extends ServiceProvider
         $this->publish();
 
         $this->registerCommands();
+
+        $this->registerEventListeners();
+
+        $this->registerMigrations();
     }
 
     protected function publish()
@@ -33,6 +40,16 @@ class LaravelActionPermissionServiceProvider extends ServiceProvider
                 SyncControllerActions::class,
             ]);
         }
+    }
+
+    protected function registerEventListeners()
+    {
+        Event::listen(ClearPermissionCacheEvent::class, ClearPermissionCacheListener::class);
+    }
+
+    protected function registerMigrations()
+    {
+        $this->loadMigrationsFrom(__DIR__ . '/Migrations');
     }
 
     /**

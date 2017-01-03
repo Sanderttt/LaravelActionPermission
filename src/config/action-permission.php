@@ -12,4 +12,6 @@ return [
     ],
 
     'translation_prefix' => 'actions',
+
+    'cache_key' => 'permissions',
 ];
