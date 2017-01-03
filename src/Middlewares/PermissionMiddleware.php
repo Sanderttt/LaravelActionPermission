@@ -21,7 +21,7 @@ class PermissionMiddleware
                 abort(403, 'Access denied');
             }
 
-            return response()->redirect()->to('/login');
+            return redirect()->to('/login');
         }
 
         return $next;
