@@ -18,6 +18,6 @@ class ClearPermissionCacheListener
 
     public function handle(ClearPermissionCacheEvent $event)
     {
-        $this->cache->forget($event->cache_key);
+        $this->cache->tags([$event->cache_key])->flush();
     }
 }
