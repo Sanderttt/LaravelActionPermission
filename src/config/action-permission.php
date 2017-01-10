@@ -11,6 +11,10 @@ return [
         'Controller'
     ],
 
+    'excluded_domains' => [
+        'dashboard.zien24.dev'
+    ],
+
     'translation_prefix' => 'actions',
 
     'cache_key' => 'permissions',
