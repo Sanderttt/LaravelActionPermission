@@ -24,5 +24,5 @@ interface ActionManagerContract
 
     function getActionByMethodAndPath($method, $path);
 
-    function verify($method, $path, $user);
+    function verify($method, $path, $user, $host);
 }

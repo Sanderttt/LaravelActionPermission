@@ -88,8 +88,12 @@ class ActionManager implements ActionManagerContract
         return $this->action->where('method', '=', $method)->where('path', '=', $path)->first();
     }
 
-    function verify($method, $path, $user)
+    function verify($method, $path, $user, $host)
     {
+        if (in_array($host, config()->get('action-permission.excluded_domains'))) {
+            return true;
+        }
+
         $action = $this->getCurrentRouteAction($method, $path);
         if (!isset($action) || !$action || $action['is_ignored']) {
             return true;

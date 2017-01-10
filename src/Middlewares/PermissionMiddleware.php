@@ -15,7 +15,7 @@ class PermissionMiddleware
         $user = Auth::user();
 
         if ($request->route() !== null && !$action_manager->verify($request->getMethod(),
-                $request->route()->getActionName(), $user)
+                $request->route()->getActionName(), $user, $request->server->get('HTTP_HOST'))
         ) {
             if ($user) {
                 abort(403, 'Access denied');
