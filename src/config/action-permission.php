@@ -7,6 +7,9 @@ return [
         'GET'
     ],
 
+    /*
+     * If you are using a basename which shouldnt be shown
+     */
     'controller_name_parts_to_be_removed' => [
         'Controller'
     ],
