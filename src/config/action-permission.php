@@ -18,6 +18,7 @@ return [
      * If you are using multiple domains and not all of them should be checked
      */
     //ToDo add publish config
+    //ToDo add domains
     'excluded_domains' => [
         'dashboard.zien24.dev',
         'dashboard.test.zien24.com',
