@@ -20,7 +20,8 @@ return [
 
     'excluded_domains' => [
         'dashboard.zien24.dev',
-        'dashboard.test.zien24.com'
+        'dashboard.test.zien24.com',
+        'dashboard.zien24.nl',
     ],
 
     'translation_prefix' => 'actions',
