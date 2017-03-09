@@ -25,6 +25,8 @@ class CreateControllerActionsTable extends Migration
                 $table->boolean('is_ignored')->default(false);
                 $table->boolean('in_nav')->default(false);
                 $table->unique(['controller', 'function', 'method']);
+                $table->string('group')->nullable();
+                $table->string('alias')->nullable();
             });
         }
     }
