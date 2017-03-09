@@ -55,6 +55,25 @@ class ActionManager implements ActionManagerContract
         return true;
     }
 
+    /**
+     * @param $groups
+     * @param $aliases
+     * @return bool
+     */
+    function updateGroupAndAlias($groups, $aliases)
+    {
+        foreach ($groups as $key => $value) {
+            $this->action->where('id', '=', $key)->update(['group' => $value]);
+        }
+
+        foreach ($aliases as $key => $value) {
+            $this->action->where('id', '=', $key)->update(['alias' => $value]);
+        }
+
+        return true;
+
+    }
+
     function listIgnoredActions()
     {
         return $this->action->where('is_ignored', '=', 1)->get();

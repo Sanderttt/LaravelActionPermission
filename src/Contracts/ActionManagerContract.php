@@ -25,4 +25,6 @@ interface ActionManagerContract
     function getActionByMethodAndPath($method, $path);
 
     function verify($method, $path, $user, $host);
+
+    function updateGroupAndAlias($groups, $aliases);
 }
