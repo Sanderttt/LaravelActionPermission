@@ -20,7 +20,7 @@ interface ActionManagerContract
 
     function setNavActions($actions);
 
-    function listNavActions();
+    function listNavActions($user = null);
 
     function getActionByMethodAndPath($method, $path);
 

@@ -108,7 +108,7 @@ class ActionManager implements ActionManagerContract
                     $actions->push($role_action);
                 }
             }
-            $unique_actions = $actions->unique();
+            $unique_actions = $actions->sortBy('group')->unique();
 
             $actions = $unique_actions->values()->all();
         } else {
