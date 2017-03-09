@@ -10,7 +10,6 @@ class PermissionMiddleware
 {
     public function handle($request, Closure $next)
     {
-        $next = $next($request);
         $action_manager = app()->make(ActionManagerContract::class);
         $user = Auth::user();
 
@@ -24,6 +23,6 @@ class PermissionMiddleware
             return redirect()->to('/login');
         }
 
-        return $next;
+        return $next($request);
     }
 }
