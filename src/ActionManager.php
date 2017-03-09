@@ -76,14 +76,25 @@ class ActionManager implements ActionManagerContract
         if ($user) {
             $user_id = $user->id;
         }
-        // check for user
+
         if (cache()->tags([config('action-permission.cache_key')])->has('nav' . $user_id)) {
             return cache()->tags([config('action-permission.cache_key')])->get('nav' . $user_id);
         }
         if ($user) {
-            $actions = $user->actions()->withoutGlobalScopes()->where('in_nav', '=', 1)->get();
+            $user_actions = $user->actions()->withoutGlobalScopes()->where('in_nav', '=', 1)->get();
+            $role_actions = [];
+            $actions = collect($user_actions);
+            foreach ($user->roles()->get() as $role) {
+                foreach ($role->actions()->withoutGlobalScopes()->where('in_nav', '=',
+                    1)->get()->all() as $role_action) {
+                    $actions->push($role_action);
+                }
+            }
+            $unique_actions = $actions->unique();
+
+            $actions = $unique_actions->values()->all();
         } else {
-            $actions = $this->action->withoutGlobalScopes()->where('in_nav', '=', 1)->get();
+            $actions = $this->action->withoutGlobalScopes()->where('in_nav', '=', 1)->get()->toArray();
         }
 
         cache()->tags([config('action-permission.cache_key')])->put('nav' . $user_id, $actions, 60 * 60 * 24 * 7);
