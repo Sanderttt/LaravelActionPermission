@@ -76,7 +76,7 @@ class ActionManager implements ActionManagerContract
         if ($user) {
             $user_id = $user->id;
         }
-
+        // check for user
         if (cache()->tags([config('action-permission.cache_key')])->has('nav' . $user_id)) {
             return cache()->tags([config('action-permission.cache_key')])->get('nav' . $user_id);
         }
