@@ -70,15 +70,23 @@ class ActionManager implements ActionManagerContract
         return true;
     }
 
-    function listNavActions()
+    function listNavActions($user = null)
     {
-        if (cache()->tags([config('action-permission.cache_key')])->has('nav')) {
-            return cache()->tags([config('action-permission.cache_key')])->get('nav');
+        $user_id = null;
+        if ($user) {
+            $user_id = $user->id;
         }
 
-        $actions = $this->action->where('in_nav', '=', 1)->get();
+        if (cache()->tags([config('action-permission.cache_key')])->has('nav' . $user_id)) {
+            return cache()->tags([config('action-permission.cache_key')])->get('nav' . $user_id);
+        }
+        if ($user) {
+            $actions = $user->actions()->withoutGlobalScopes()->where('in_nav', '=', 1)->get();
+        } else {
+            $actions = $this->action->withoutGlobalScopes()->where('in_nav', '=', 1)->get();
+        }
 
-        cache()->tags([config('action-permission.cache_key')])->put('nav', $actions, 60 * 60 * 24 * 7);
+        cache()->tags([config('action-permission.cache_key')])->put('nav' . $user_id, $actions, 60 * 60 * 24 * 7);
 
         return $actions;
     }
