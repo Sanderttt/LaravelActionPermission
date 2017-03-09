@@ -82,7 +82,6 @@ class ActionManager implements ActionManagerContract
         }
         if ($user) {
             $user_actions = $user->actions()->withoutGlobalScopes()->where('in_nav', '=', 1)->get();
-            $role_actions = [];
             $actions = collect($user_actions);
             foreach ($user->roles()->get() as $role) {
                 foreach ($role->actions()->withoutGlobalScopes()->where('in_nav', '=',
