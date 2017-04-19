@@ -21,7 +21,7 @@ class PermissionMiddleware
             if ($request->ajax()) {
                 return response()->json(['error' => 'Access denied.'], 403);
             }
-
+            //fix middleware
             if ($user) {
                 abort(403, 'Access denied');
             }
