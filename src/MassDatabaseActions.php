@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\DB;
 
 class MassDatabaseActions
 {
-    public function run($model, $records, $create_fields, $update_fields, $time, $delete = false)
+    public function run($model, $records, $create_fields, $update_fields, $time, $delete = true)
     {
         $this->table = $model->getTable();
 
