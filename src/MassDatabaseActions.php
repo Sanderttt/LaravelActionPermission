@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\DB;
 
 class MassDatabaseActions
 {
-    public function run($model, $records, $create_fields, $update_fields, $time)
+    public function run($model, $records, $create_fields, $update_fields, $time, $delete = false)
     {
         $this->table = $model->getTable();
 
@@ -31,7 +31,7 @@ class MassDatabaseActions
 
         $res = $stmt->execute(array_flatten($this->data));
 
-        if ($res) {
+        if ($res && $delete) {
             if ($model->where('updated_at', '<', $time)->delete()) {
                 return true;
             }
